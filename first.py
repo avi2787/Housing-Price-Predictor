@@ -24,7 +24,8 @@ model = sklearn.linear_model.LinearRegression()
 
 model.fit(X,y)
 
-X_new = [[5600]]
+
+X_new = [[7,074.19]] #gdp per capita of brazil in 2020 (LS = 6.1)
 print(model.predict(X_new))
 
-# This is a small change
+
