@@ -1,0 +1,72 @@
+#printing necessary libraries 
+from pathlib import Path
+import pandas as pd
+import tarfile
+import urllib.request
+import matplotlib.pyplot as plt
+import numpy as np
+
+
+#define function to read and load data
+def load_housing_data():
+    tarball_path = Path("datasets/housing.tgz")
+    if not tarball_path.is_file():
+        Path("datasets").mkdir(parents=True, exist_ok=True)
+        url = "https://github.com/ageron/data/raw/main/housing.tgz"
+        urllib.request.urlretrieve(url, tarball_path)
+    with tarfile.open(tarball_path) as housing_tarball:
+            housing_tarball.extractall(path="datasets")
+    return pd.read_csv(Path("datasets/housing/housing.csv"))
+
+
+
+np.random.seed(42)
+
+#define function to split the data(the rows) into two sets based on a given ratio- training and test
+def shuffle_and_split_data(data, test_ratio):
+    shuffled_indices = np.random.permutation(len(data))
+    test_set_size = int(len(data) * test_ratio)
+    test_indices = shuffled_indices[:test_set_size]
+    train_indices = shuffled_indices[test_set_size:]
+    return data.iloc[train_indices], data.iloc[test_indices]
+    
+#store data in variable called housing
+housing = load_housing_data()
+
+#show information about each feature, datatypes, name and count
+housing.info()
+
+#count and print all insances of different values under the "ocean_proximity" column
+print(housing["ocean_proximity"].value_counts())
+
+#prints mean, standard deviation and averages of each feature
+print(housing.describe())
+
+#creates and shows a histogram for each feature of the data
+housing.hist(bins=50, figsize=(12,8))
+plt.show()
+
+
+#calls the function and stores each data split into its respective variables, then printing its length.
+train_set, test_set = shuffle_and_split_data(housing, 0.2)
+print("length of training set = "+str(len(train_set)))
+print("length of testing set = "+ str(len(test_set)))
+
+
+#we can see now that the data has been split. note that total_bedrooms doesnt add up to 14448
+train_set.info()
+test_set.info()
+
+#create income categories for stratified sampling
+housing["income_cat"] = pd.cut(housing["median_income"],
+                               bins=[0., 1.5, 3.0, 4.5, 6., np.inf],
+                               labels=[1, 2, 3, 4, 5])
+
+#separate features and labels
+housing = train_set.drop("median_house_value", axis=1)
+housing_labels = train_set["median_house_value"].copy()
+
+
+
+
+

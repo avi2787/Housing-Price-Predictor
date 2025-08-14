@@ -2,7 +2,8 @@ import numpy as np
 import time as t 
 import matplotlib.pyplot as plt
 import pandas as pd 
-import sklearn.linear_model
+from sklearn.linear_model import LinearRegression
+from sklearn.neighbors import KNeighborsRegressor
 
 
 
@@ -20,12 +21,15 @@ plt.show()
 
 
 
-model = sklearn.linear_model.LinearRegression()
+model = LinearRegression()
+#model = KNeighborsRegressor(n_neighbors=3)
 
 model.fit(X,y)
 
 
-X_new = [[7,074.19]] #gdp per capita of brazil in 2020 (LS = 6.1)
+X_new = [[0]] #gdp per capita of brazil in 2020 (LS = 6.1)
 print(model.predict(X_new))
+
+
 
 
