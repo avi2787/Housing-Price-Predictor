@@ -1,5 +1,4 @@
-
-#import necessary modules
+#import modules needed
 import os
 import tarfile
 import urllib.request
@@ -16,6 +15,25 @@ from sklearn.tree import DecisionTreeRegressor
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.metrics import mean_squared_error
 from sklearn.model_selection import cross_val_score, GridSearchCV
+from sklearn.base import BaseEstimator, TransformerMixin
+
+#column index constants (for housing_num DataFrame)
+rooms_ix, bedrooms_ix, population_ix, households_ix = 3, 4, 5, 6
+
+class CombinedAttributesAdder(BaseEstimator, TransformerMixin):
+    def __init__(self, add_bedrooms_per_room=True): 
+        self.add_bedrooms_per_room = add_bedrooms_per_room
+    def fit(self, X, y=None):
+        return self
+    def transform(self, X):
+        rooms_per_household = X[:, rooms_ix] / X[:, households_ix]
+        population_per_household = X[:, population_ix] / X[:, households_ix]
+        if self.add_bedrooms_per_room:
+            bedrooms_per_room = X[:, bedrooms_ix] / X[:, rooms_ix]
+            return np.c_[X, rooms_per_household, population_per_household, bedrooms_per_room]
+        else:
+            return np.c_[X, rooms_per_household, population_per_household]
+
 
 #download and load the data
 DOWNLOAD_ROOT = "https://raw.githubusercontent.com/ageron/handson-ml2/master/"
@@ -35,7 +53,7 @@ def load_housing_data(housing_path=HOUSING_PATH):
     return pd.read_csv(csv_path)
 
 #fetch and load the data
-fetch_housing_data()
+#fetch_housing_data()
 housing = load_housing_data()
 
 #explore the data
@@ -65,12 +83,15 @@ housing_labels = strat_train_set["median_house_value"].copy()
 #data preprocessing pipeline
 num_pipeline = Pipeline([
     ('imputer', SimpleImputer(strategy="median")),
+    ('attribs_adder', CombinedAttributesAdder()),
     ('std_scaler', StandardScaler()),
 ])
 
 housing_num = housing.drop("ocean_proximity", axis=1)
 num_attribs = list(housing_num)
 cat_attribs = ["ocean_proximity"]
+
+
 
 full_pipeline = ColumnTransformer([
     ("num", num_pipeline, num_attribs),
@@ -155,3 +176,33 @@ attributes = num_attribs + extra_attribs + cat_one_hot_attribs
 print("\nFeature importances:")
 for importance, attribute in sorted(zip(feature_importances, attributes), reverse=True):
     print(f"{attribute}: {importance}")
+
+
+
+#scatter plot of actual vs predicted values
+plt.figure(figsize=(8,6))
+plt.scatter(y_test, final_predictions, alpha=0.2)
+plt.plot([y_test.min(), y_test.max()], [y_test.min(), y_test.max()], 'r--') 
+plt.xlabel("Actual Values")
+plt.ylabel("Predicted Values")
+plt.title("Actual vs Predicted Values")
+plt.grid(True)
+plt.show()
+
+
+
+
+housing = strat_train_set.copy()
+
+#scatter plot geographically
+housing.plot(kind="scatter", x="longitude", y="latitude", alpha=0.4,
+             s=housing["population"]/100, label="Population",
+             c="median_house_value", cmap=plt.get_cmap("jet"), colorbar=True,
+             figsize=(10, 7), sharex=False)
+plt.legend()
+plt.title("California Housing Prices")
+plt.show()
+
+
+
+#whys that line happening at 500,000?? cap? 

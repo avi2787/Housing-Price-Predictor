@@ -68,5 +68,5 @@ housing_labels = train_set["median_house_value"].copy()
 
 
 
-
+#lost this file for a bit so did again on new 
 

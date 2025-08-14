@@ -1,0 +1,13 @@
+{
+	"folders": [
+		{
+			"name": "work-experience",
+			"path": "../.."
+		},
+		{
+			"name": "project 1",
+			"path": "../../../work experience/project 1"
+		}
+	],
+	"settings": {}
+}
