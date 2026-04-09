@@ -56,3 +56,8 @@ python housingmarketnew.py
 
 - This project uses **supervised learning** for regression.
 - The current Git remote is configured for Bitbucket. To publish this repository to a GitHub repository named `Housing Price Predictor`, update the remote origin to your GitHub repository URL and push the branch.
+- 
+<img width="1013" height="833" alt="image" src="https://github.com/user-attachments/assets/cbd6c1ab-c1d2-472d-a5f0-08cac9a34007" />
+<img width="1248" height="952" alt="image" src="https://github.com/user-attachments/assets/2a3fefae-64f7-4db1-830e-18bed35b7ea5" />
+
+
