@@ -1,15 +1,3 @@
-"""
-A single clean script that implements:
-  • Leakage-free pipelines (preprocessing + model)
-  • Spatially blocked cross-validation (KMeans clusters + GroupKFold)
-  • Target log tansform via TransformedTargetRegressor
-  • Stacking ensemble (RF + LightGBM + XGBoost) with proper preprocessing
-  • Quantile prediction (LightGBM) + Conformal intervals for calibrated bands
-  • metrics (RMSE, MAE, MedAE, R2, MAPE, RMSLE)
-  • Residuals (including spatial residual map)
-  • SHAP interpretability with reliable feature names
-"""
-
 import os
 import tarfile
 import urllib.request
